@@ -1,0 +1,132 @@
+<html>
+<head>
+    <title>lottery</title>
+    <style>
+        body {
+            background: #2ecc71;
+        }
+        
+        #zhuanpan {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -50px 0 0 -120px;
+            width: 240px;
+            height: 100px;
+            text-align: center;
+        }
+
+        #randomNum {
+            color: #fff;
+            font: 900 90px/100px "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #results {
+            color: #fff;
+            font: 900 25px/30px "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .min {
+            position: fixed;
+            right: 10px;
+            bottom: 20px;
+
+            color: #fff;
+            font: 900 55px/30px "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .max {
+            position: fixed;
+            right: 10px;
+            top: 20px;
+
+            color: #fff;
+            font: 900 55px/30px "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="results"></div>
+    <div id="zhuanpan"><span id="randomNum">Ready?</span></div>
+    <div class="max"><span id="maxNum"></span></div>
+    <div class="min"><span id="minNum"></span></div>
+
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script>
+        const MAX = 10000;
+        var randomNumDom = document.getElementById('randomNum');
+        var lastNum = 0;
+        var status = 'pause';
+        var intervalId = 0;
+        var results = [];
+        var counter = 0;
+        var max = 0;
+        var min = MAX;
+
+        document.addEventListener('keydown', function(e) {
+            if (e.code != 'Space') return;
+
+            if (status == 'pause') {
+                start();
+                status = 'starting';
+            } else {
+                stop();
+                status = 'pause';
+            }
+        });
+
+        function start() {
+            intervalId = setInterval(handler, 100);
+        }
+
+        function stop() {
+            clearInterval(intervalId);
+            results.push(lastNum);
+            renderRandomNum(lastNum, false);
+            renderResult(lastNum);
+            renderWinner(lastNum);
+        }
+
+        function handler () {
+            lastNum = Math.ceil(Math.random() * MAX);
+
+            renderRandomNum(lastNum);
+        }
+
+        function renderRandomNum(num, mix) {
+            var text = num.toString()
+            var reg = /\d{1}(\d+)/;
+            if (mix !== false) {
+                text = text.replace(reg, '*$1');
+            }
+
+            randomNumDom.innerText = text;
+        }
+
+        function renderResult(num) {
+            counter++;
+            var resultDom = $('#results');
+            var newChild = document.createElement('div');
+            newChild.id = 'result-id-' + counter;
+            newChild.innerText = num;
+            resultDom.append(newChild);
+
+            $('#result-id-' + counter).hide();
+            $('#result-id-' + counter).fadeIn(500);
+        }
+
+        function renderWinner(num) {
+            if (num > max) {
+                max = num;
+                document.getElementById('maxNum').innerText = num;
+            }
+
+            if (num < min) {
+                min = num;
+                document.getElementById('minNum').innerText = num;
+            }
+        }
+    </script>
+</body>
+</html>
