@@ -64,9 +64,11 @@
         var max = 0;
         var min = MAX;
 
-        document.addEventListener('keydown', function(e) {
-            if (e.code != 'Space') return;
+        document.addEventListener('touchstart', main)
 
+        document.addEventListener('keydown', main);
+
+        function main() {
             if (status == 'pause') {
                 start();
                 status = 'starting';
@@ -74,7 +76,7 @@
                 stop();
                 status = 'pause';
             }
-        });
+        }
 
         function start() {
             intervalId = setInterval(handler, 100);
